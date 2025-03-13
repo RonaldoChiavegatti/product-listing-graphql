@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from '../src/app.module';
 import { Logger } from '@nestjs/common';
 
 let cachedApp: any;
@@ -35,7 +35,6 @@ async function bootstrap() {
       logger.log(`Application is running on: ${await app.getUrl()}`);
     } else {
       await app.init();
-      // Não chama listen() em produção para evitar inicialização desnecessária do servidor HTTP
     }
 
     cachedApp = app;
@@ -48,10 +47,18 @@ async function bootstrap() {
   }
 }
 
+export default async function handler(req: any, res: any) {
+  try {
+    const app = await bootstrap();
+    const server = app.getHttpAdapter().getInstance();
+    return server(req, res);
+  } catch (error) {
+    console.error('Handler error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
 // For local development
 if (process.env.NODE_ENV !== 'production') {
   bootstrap();
-}
-
-// For Vercel serverless deployment
-export default bootstrap;
+} 
