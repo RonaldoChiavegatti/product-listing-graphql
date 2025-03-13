@@ -1,8 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log']
+  });
   
   // Enable CORS
   app.enableCors({
@@ -20,6 +24,13 @@ async function bootstrap() {
   // Get port from environment variable or use default
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  logger.log(`Application is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  bootstrap();
+}
+
+// For Vercel serverless deployment
+export default bootstrap;
