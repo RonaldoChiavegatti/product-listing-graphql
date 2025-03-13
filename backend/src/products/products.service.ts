@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { Product, Prisma } from '@prisma/client';
+import { Product } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -28,22 +28,18 @@ export class ProductsService {
       return product;
     } catch (error) {
       console.error('Error creating product:', error);
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundException('User not found');
-        }
+      if (error.code === 'P2002') {
+        throw new Error('A product with this name already exists');
       }
-      throw new InternalServerErrorException('Failed to create product');
+      throw error;
     }
   }
 
   async findAll(userId: number): Promise<Product[]> {
-    const where: Prisma.ProductWhereInput = {
-      userId
-    };
-
     return this.prisma.product.findMany({
-      where,
+      where: {
+        userId
+      },
       orderBy: {
         valor: 'asc'
       }
@@ -51,12 +47,12 @@ export class ProductsService {
   }
 
   async findOne(id: number, userId: number): Promise<Product> {
-    const where: Prisma.ProductWhereInput = {
-      id,
-      userId
-    };
-
-    const product = await this.prisma.product.findFirst({ where });
+    const product = await this.prisma.product.findFirst({
+      where: {
+        id,
+        userId
+      }
+    });
 
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found or you don't have access to it`);

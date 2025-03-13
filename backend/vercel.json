@@ -7,7 +7,9 @@
             "config": {
                 "maxLambdaSize": "15mb",
                 "includeFiles": [
-                    "dist/**"
+                    "dist/**",
+                    "node_modules/.prisma/**",
+                    "node_modules/@prisma/client/**"
                 ]
             }
         }
@@ -27,8 +29,4 @@
     "env": {
         "NODE_ENV": "production"
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 857c71c5d9bc5335b0ee04df88bbacf1b8b104d5

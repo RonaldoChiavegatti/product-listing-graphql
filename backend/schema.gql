@@ -2,51 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Product {
-  id: Int!
-  nome: String!
-  descricao: String!
-  valor: Float!
-  disponivel: Boolean!
-  criado_em: DateTime!
+type AuthError {
+  message: String!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type AuthResponse {
-  access_token: String!
-}
-
-type Query {
-  products: [Product!]!
-  product(id: Int!): Product!
-}
-
-type Mutation {
-  createProduct(createProductDto: CreateProductDto!): Product!
-  updateProduct(updateProductDto: UpdateProductDto!, id: Int!): Product!
-  removeProduct(id: Int!): Product!
-  login(loginInput: LoginInput!): AuthResponse
-  register(registerInput: RegisterInput!): AuthResponse!
+  access_token: String
+  error: AuthError
 }
 
 input CreateProductDto {
-  nome: String!
   descricao: String!
-  valor: Float!
-  image: String
   disponivel: Boolean! = true
-}
-
-input UpdateProductDto {
-  nome: String
-  descricao: String
-  valor: Float
   image: String
-  disponivel: Boolean
+  nome: String!
+  valor: Float!
 }
 
 input LoginInput {
@@ -54,7 +24,44 @@ input LoginInput {
   password: String!
 }
 
+type Mutation {
+  createProduct(createProductDto: CreateProductDto!): Product!
+  login(loginInput: LoginInput!): AuthResponse!
+  register(registerInput: RegisterInput!): AuthResponse!
+  removeProduct(id: Int!): Product!
+  updateProduct(id: Int!, updateProductDto: UpdateProductDto!): Product!
+}
+
+type Product {
+  criado_em: Timestamp!
+  descricao: String!
+  disponivel: Boolean!
+  id: Int!
+  image: String
+  nome: String!
+  userId: Int!
+  valor: Float!
+}
+
+type Query {
+  product(id: Int!): Product!
+  products: [Product!]!
+}
+
 input RegisterInput {
   email: String!
   password: String!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+input UpdateProductDto {
+  descricao: String
+  disponivel: Boolean
+  image: String
+  nome: String
+  valor: Float
 }
