@@ -2,10 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 
+let app: any;
+
 async function bootstrap() {
+  if (app) {
+    return app;
+  }
+
   const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log']
+  app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn'],
+    cors: true
   });
   
   // Enable CORS
@@ -23,8 +30,15 @@ async function bootstrap() {
 
   // Get port from environment variable or use default
   const port = process.env.PORT || 3000;
-  await app.listen(port);
-  logger.log(`Application is running on: ${await app.getUrl()}`);
+  
+  if (process.env.NODE_ENV !== 'production') {
+    await app.listen(port);
+    logger.log(`Application is running on: ${await app.getUrl()}`);
+  } else {
+    await app.init();
+  }
+
+  return app;
 }
 
 // For local development
