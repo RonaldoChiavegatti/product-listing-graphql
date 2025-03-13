@@ -20,12 +20,14 @@ import { join } from 'path';
       driver: ApolloDriver,
       autoSchemaFile: true,
       sortSchema: true,
-      playground: true,
+      playground: process.env.NODE_ENV !== 'production',
       introspection: true,
       context: ({ req }) => ({ req }),
       buildSchemaOptions: {
         dateScalarMode: 'timestamp',
-      }
+      },
+      persistedQueries: false,
+      cache: 'bounded'
     }),
     JwtModule.register({
       secret: 'your-secret-key', // Make sure this is set
