@@ -5,41 +5,36 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/auth.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
-import { join } from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
-      sortSchema: true,
-      playground: process.env.NODE_ENV !== 'production',
-      introspection: true,
-      context: ({ req }) => ({ req }),
-      buildSchemaOptions: {
-        dateScalarMode: 'timestamp',
-      },
-      persistedQueries: false,
-      cache: 'bounded'
+      playground: true,
+      debug: true,
+      context: ({ req, res }) => ({ req, res }),
     }),
     JwtModule.register({
       secret: 'your-secret-key', // Make sure this is set
       signOptions: { expiresIn: '1d' },
     }),
     ProductsModule,
-    PrismaModule,
     AuthModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    PrismaService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
