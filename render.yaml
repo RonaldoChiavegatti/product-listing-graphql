@@ -3,7 +3,7 @@ services:
     name: testeoak-backend
     env: node
     rootDirectory: backend
-    buildCommand: cp .env.production .env && npm install && npx prisma generate && npm run build
+    buildCommand: npm install -g @nestjs/cli && npm install && npx prisma generate && npm run build
     startCommand: npm run start:prod
     envVars:
       - key: NODE_ENV
