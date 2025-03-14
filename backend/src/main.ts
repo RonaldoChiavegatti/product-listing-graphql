@@ -19,12 +19,12 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
   });
 
-  // Get port from environment
-  const port = process.env.PORT || 3000;
+  // Fixed port and host for Render deployment
+  const port = 10000;
   const host = '0.0.0.0';
 
   logger.log(`Environment variables:`, {
-    PORT: process.env.PORT,
+    PORT: port,
     NODE_ENV: process.env.NODE_ENV,
     HOST: host
   });
@@ -33,8 +33,8 @@ async function bootstrap() {
     // Enable shutdown hooks
     app.enableShutdownHooks();
     
-    // Start listening
-    await app.listen(port);
+    // Start listening with explicit port and host
+    await app.listen(port, host);
     
     // Use the actual service URL in production
     const baseUrl = process.env.NODE_ENV === 'production' 
@@ -45,6 +45,7 @@ async function bootstrap() {
     logger.log(`GraphQL endpoint: ${baseUrl}/graphql`);
     logger.log(`Health check endpoint: ${baseUrl}/api/health`);
     logger.log(`Environment: ${process.env.NODE_ENV}`);
+    logger.log(`Listening on port ${port} and host ${host}`);
 
     // Log when the application is ready
     process.send?.('ready');
