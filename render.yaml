@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: testeoak-backend
+    name: product-listing-graphql
     env: node
     rootDirectory: backend
     buildCommand: npm install -g @nestjs/cli && npm install && npx prisma generate && npm run build
@@ -12,6 +12,8 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
+      - key: PORT
+        value: "10000"
     healthCheckPath: /api/health
     autoDeploy: true
     plan: starter

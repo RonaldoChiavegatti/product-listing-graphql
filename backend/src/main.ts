@@ -36,10 +36,14 @@ async function bootstrap() {
     // Start listening
     await app.listen(port, host);
     
-    const url = await app.getUrl();
-    logger.log(`Server is running on: ${url}`);
-    logger.log(`GraphQL endpoint: ${url}/graphql`);
-    logger.log(`Health check endpoint: ${url}/api/health`);
+    // Use the actual service URL in production
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://product-listing-graphql.onrender.com'
+      : `http://${host}:${port}`;
+
+    logger.log(`Server is running on: ${baseUrl}`);
+    logger.log(`GraphQL endpoint: ${baseUrl}/graphql`);
+    logger.log(`Health check endpoint: ${baseUrl}/api/health`);
     logger.log(`Environment: ${process.env.NODE_ENV}`);
 
     // Log when the application is ready
