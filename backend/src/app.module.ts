@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/auth.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -19,10 +20,8 @@ import { HttpExceptionFilter } from './common/http-exception.filter';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,
+      autoSchemaFile: 'schema.gql',
       playground: true,
-      debug: true,
-      context: ({ req, res }) => ({ req, res }),
     }),
     JwtModule.register({
       secret: 'your-secret-key', // Make sure this is set
@@ -31,7 +30,7 @@ import { HttpExceptionFilter } from './common/http-exception.filter';
     ProductsModule,
     AuthModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [
     AppService,
     PrismaService,

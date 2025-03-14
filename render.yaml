@@ -12,7 +12,7 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
-    healthCheckPath: /health
+    healthCheckPath: /api/health
     autoDeploy: true
     plan: starter
     region: oregon

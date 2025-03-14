@@ -8,6 +8,9 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
   
+  // Set global prefix
+  app.setGlobalPrefix('api');
+  
   // Enable CORS
   app.enableCors({
     origin: '*',
@@ -33,9 +36,10 @@ async function bootstrap() {
     // Start listening
     await app.listen(port, host);
     
-    logger.log(`Server is running on: http://${host}:${port}`);
-    logger.log(`GraphQL endpoint: http://${host}:${port}/graphql`);
-    logger.log(`Health check endpoint: http://${host}:${port}/health`);
+    const url = await app.getUrl();
+    logger.log(`Server is running on: ${url}`);
+    logger.log(`GraphQL endpoint: ${url}/graphql`);
+    logger.log(`Health check endpoint: ${url}/api/health`);
     logger.log(`Environment: ${process.env.NODE_ENV}`);
 
     // Log when the application is ready
