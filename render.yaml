@@ -15,4 +15,15 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     plan: starter
-    region: oregon 
+    region: oregon
+    numInstances: 1
+    buildFilter:
+      paths:
+        - backend/**/*.ts
+        - backend/**/*.json
+        - backend/package.json
+        - backend/package-lock.json
+    headers:
+      - path: /*
+        name: Access-Control-Allow-Origin
+        value: "*" 
