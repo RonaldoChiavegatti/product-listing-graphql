@@ -9,7 +9,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        value: postgresql://ronaldocorrea_user:wV7WrTgR7KxXStnXdB5duBf1oNgXkEOP@dpg-cva2shlumphs73adf7ug-a.oregon-postgres.render.com/ronaldocorrea
+        sync: false
       - key: JWT_SECRET
         sync: false
     healthCheckPath: /health
