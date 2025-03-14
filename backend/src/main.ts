@@ -17,7 +17,7 @@ async function bootstrap() {
   });
 
   // Get port from environment
-  const port = process.env.PORT || 3000;
+  const port = parseInt(process.env.PORT || '3000', 10);
   logger.log(`Environment variables:`, {
     PORT: process.env.PORT,
     NODE_ENV: process.env.NODE_ENV
@@ -27,14 +27,13 @@ async function bootstrap() {
     // Enable shutdown hooks
     app.enableShutdownHooks();
     
-    // Start listening
-    await app.listen(port);
-    
-    const serverUrl = await app.getUrl();
-    logger.log(`Server is running on: ${serverUrl}`);
-    logger.log(`GraphQL endpoint: ${serverUrl}/graphql`);
-    logger.log(`Health check endpoint: ${serverUrl}/health`);
-    logger.log(`Environment: ${process.env.NODE_ENV}`);
+    // Start listening - force IPv4
+    await app.listen(port, '0.0.0.0', () => {
+      logger.log(`Server is running on: http://0.0.0.0:${port}`);
+      logger.log(`GraphQL endpoint: http://0.0.0.0:${port}/graphql`);
+      logger.log(`Health check endpoint: http://0.0.0.0:${port}/health`);
+      logger.log(`Environment: ${process.env.NODE_ENV}`);
+    });
   } catch (error) {
     logger.error('Failed to start server:', error);
     logger.error('Error details:', {
