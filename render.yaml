@@ -24,7 +24,13 @@ services:
         - backend/package.json
         - backend/package-lock.json
         - backend/.env.production
+        - backend/Procfile
     headers:
       - path: /*
         name: Access-Control-Allow-Origin
-        value: "*" 
+        value: "*"
+    scaling:
+      minInstances: 1
+      maxInstances: 1
+      targetMemoryPercent: 60
+      targetCPUPercent: 60 

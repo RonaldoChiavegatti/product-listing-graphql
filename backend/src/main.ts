@@ -10,7 +10,7 @@ async function bootstrap() {
   
   // Enable CORS
   app.enableCors({
-    origin: '*',  // Update to allow all origins in production
+    origin: '*',
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
@@ -18,21 +18,34 @@ async function bootstrap() {
 
   // Get port from environment
   const port = parseInt(process.env.PORT || '3000', 10);
+  const host = '0.0.0.0';
+
   logger.log(`Environment variables:`, {
     PORT: process.env.PORT,
-    NODE_ENV: process.env.NODE_ENV
+    NODE_ENV: process.env.NODE_ENV,
+    HOST: host
   });
   
   try {
     // Enable shutdown hooks
     app.enableShutdownHooks();
     
-    // Start listening - force IPv4
-    await app.listen(port, '0.0.0.0', () => {
-      logger.log(`Server is running on: http://0.0.0.0:${port}`);
-      logger.log(`GraphQL endpoint: http://0.0.0.0:${port}/graphql`);
-      logger.log(`Health check endpoint: http://0.0.0.0:${port}/health`);
-      logger.log(`Environment: ${process.env.NODE_ENV}`);
+    // Start listening
+    await app.listen(port, host);
+    
+    logger.log(`Server is running on: http://${host}:${port}`);
+    logger.log(`GraphQL endpoint: http://${host}:${port}/graphql`);
+    logger.log(`Health check endpoint: http://${host}:${port}/health`);
+    logger.log(`Environment: ${process.env.NODE_ENV}`);
+
+    // Log when the application is ready
+    process.send?.('ready');
+
+    // Handle shutdown gracefully
+    process.on('SIGTERM', async () => {
+      logger.log('SIGTERM received, shutting down...');
+      await app.close();
+      process.exit(0);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);
