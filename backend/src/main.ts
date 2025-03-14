@@ -20,7 +20,7 @@ async function bootstrap() {
   });
 
   // Get port from environment
-  const port = parseInt(process.env.PORT || '3000', 10);
+  const port = process.env.PORT || 3000;
   const host = '0.0.0.0';
 
   logger.log(`Environment variables:`, {
@@ -34,7 +34,7 @@ async function bootstrap() {
     app.enableShutdownHooks();
     
     // Start listening
-    await app.listen(port, host);
+    await app.listen(port);
     
     // Use the actual service URL in production
     const baseUrl = process.env.NODE_ENV === 'production' 
