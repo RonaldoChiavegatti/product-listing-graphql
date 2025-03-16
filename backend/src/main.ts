@@ -19,9 +19,9 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
   });
 
-  // Fixed port and host for Render deployment
-  const port = 10000;
-  const host = '0.0.0.0';
+  // Get port from environment variable as required by Render
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  const host = '0.0.0.0'; // Required by Render - do not use localhost or 127.0.0.1
 
   logger.log(`Environment variables:`, {
     PORT: port,
@@ -33,7 +33,7 @@ async function bootstrap() {
     // Enable shutdown hooks
     app.enableShutdownHooks();
     
-    // Start listening with explicit port and host
+    // Start listening - explicitly binding to 0.0.0.0 as required by Render
     await app.listen(port, host);
     
     // Use the actual service URL in production
