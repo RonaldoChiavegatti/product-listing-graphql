@@ -19,36 +19,17 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
   });
 
-  // Get port from environment variable as required by Render
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-  const host = '0.0.0.0'; // Required by Render - do not use localhost or 127.0.0.1
+  // Use Render's dynamic PORT
+  const port = process.env.PORT || 3000;
 
-  logger.log(`Environment variables:`, {
-    PORT: port,
-    NODE_ENV: process.env.NODE_ENV,
-    HOST: host
-  });
-  
   try {
-    // Enable shutdown hooks
-    app.enableShutdownHooks();
+    // Start listening on 0.0.0.0 with Render's PORT
+    await app.listen(port, '0.0.0.0');
     
-    // Start listening - explicitly binding to 0.0.0.0 as required by Render
-    await app.listen(port, host);
-    
-    // Use the actual service URL in production
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://product-listing-graphql.onrender.com'
-      : `http://${host}:${port}`;
-
-    logger.log(`Server is running on: ${baseUrl}`);
-    logger.log(`GraphQL endpoint: ${baseUrl}/graphql`);
-    logger.log(`Health check endpoint: ${baseUrl}/api/health`);
+    logger.log(`Server is running on port ${port}`);
     logger.log(`Environment: ${process.env.NODE_ENV}`);
-    logger.log(`Listening on port ${port} and host ${host}`);
-
-    // Log when the application is ready
-    process.send?.('ready');
+    logger.log(`GraphQL endpoint: /graphql`);
+    logger.log(`Health check endpoint: /api/health`);
 
     // Handle shutdown gracefully
     process.on('SIGTERM', async () => {
